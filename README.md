@@ -6,7 +6,13 @@
 # Lista de pacotes para fazer unboxing
 
   - \[x\] jtrecenti/draft
-  - \[ \] RobertMyles/modelscript
-  - \[ \] allisonhorst/palmerpenguins
-  - \[ \] ThinkR-open/golem
+  - \[x\] RobertMyles/modelscript
+  - \[x\] allisonhorst/palmerpenguins
+  - \[x\] ThinkR-open/golem
   - \[ \] dreamRs/fresh
+  - \[ \] CatterPlots
+  - \[ \] plumber
+  - \[ \] Causalbounds
+  - \[ \] brms
+  - \[ \] unglue
+  - \[ \] esquisse
