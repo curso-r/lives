@@ -1,0 +1,23 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# lives
+
+# Lista de pacotes para fazer unboxing
+
+- [x] jtrecenti/draft
+- [ ] RobertMyles/modelscript
+- [ ] allisonhorst/palmerpenguins
+- [ ] ThinkR-open/golem
+- [ ] dreamRs/fresh
+
