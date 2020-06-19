@@ -14,6 +14,8 @@ penguins %>%
     across(starts_with("bill"), ~.^2)
   )
 
+
+
 penguins %>%
   mutate_at(vars(starts_with("bill")), ~ .^2) %>%
   mutate(
@@ -31,9 +33,15 @@ penguins %>%
 penguins %>%
   summarise(
     first_species = first(species)
-  ) %>%
+  )
+
+penguins %>%
   summarise_if(is.numeric, mean, na.rm = TRUE)
 
+#
+# _if - across(where())
+# _at - across()
+# _all - across(everything())
 
 
 
