@@ -9,6 +9,7 @@
   - \[x\] RobertMyles/modelscript
   - \[x\] allisonhorst/palmerpenguins
   - \[x\] ThinkR-open/golem
+  - \[x\] jakelawlor/PNWColors
   - \[ \] dreamRs/fresh
   - \[ \] CatterPlots
   - \[ \] plumber
