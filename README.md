@@ -10,10 +10,12 @@
   - \[x\] allisonhorst/palmerpenguins
   - \[x\] ThinkR-open/golem
   - \[x\] jakelawlor/PNWColors
-  - \[ \] dreamRs/fresh
-  - \[ \] CatterPlots
-  - \[ \] plumber
-  - \[ \] Causalbounds
-  - \[ \] brms
-  - \[ \] unglue
-  - \[ \] esquisse
+  - \[x\] palletteer
+  - \[x\] dplyr 1.0
+  - \[x\] dreamRs/fresh
+  - \[ \] "CatterPlots",
+  - \[ \] "plumber",
+  - \[ \] "Causalbounds",
+  - \[ \] "brms",
+  - \[ \] "unglue",
+  - \[ \] "esquisse",
