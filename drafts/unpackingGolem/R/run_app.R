@@ -1,17 +1,14 @@
-#' Run the Shiny Application
-#'
-#' @param ... A series of options to be used inside the app.
-#'
-#' @export
-#' @importFrom shiny shinyApp
-#' @importFrom golem with_golem_options
-run_app <- function(
-  ...
-) {
-  
-  tema <- fresh::create_theme(
+
+anemone <- function() {
+  PNWColors::pnw_palette("Anemone")
+}
+
+tema <- function() {
+  fresh::create_theme(
     fresh::adminlte_color(
-      light_blue = "#434C5E"
+      light_blue = "#434C5E",
+      aqua = anemone()[1], 
+      green = anemone()[2]
     ),
     fresh::adminlte_sidebar(
       width = "400px",
@@ -25,6 +22,19 @@ run_app <- function(
       info_box_bg = "#D8DEE9"
     )
   )
+}
+
+
+#' Run the Shiny Application
+#'
+#' @param ... A series of options to be used inside the app.
+#'
+#' @export
+#' @importFrom shiny shinyApp
+#' @importFrom golem with_golem_options
+run_app <- function(
+  ...
+) {
   
   with_golem_options(
     app = shinyApp(

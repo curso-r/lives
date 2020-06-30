@@ -15,7 +15,7 @@ app_ui <- function(request) {
       )
     ),
     body = shinydashboard::dashboardBody(
-      fresh::use_theme(tema),
+      fresh::use_theme(tema()),
       shinydashboard::tabItems(
         shinydashboard::tabItem(
           "vamos ver se fiz certo",
