@@ -1,0 +1,27 @@
+.main-header .logo {
+    -webkit-transition: width .3s ease-in-out;
+    -o-transition: width .3s ease-in-out;
+    transition: width .3s ease-in-out;
+    display: block;
+    float: left;
+    height: 50px;
+    font-size: 25px;
+    line-height: 50px;
+    text-align: center;
+    width: 230px;
+    font-family: 'Yellowtail', cursive;
+    padding: 0 15px;
+    font-weight: 300;
+    overflow: hidden;
+}
+
+.colorido .btn-default {
+    background-color: #1e1f77;
+    color: #dbdce8;
+    border-color: #22d04e;
+}
+
+.colorido .btn-default:hover, .btn-default:active, .btn-default.hover {
+    background-color: #d21313;
+}
+
