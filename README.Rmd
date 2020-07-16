@@ -20,12 +20,29 @@ knitr::opts_chunk$set(
 - [x] allisonhorst/palmerpenguins
 - [x] ThinkR-open/golem
 - [x] jakelawlor/PNWColors
-- [ ] dreamRs/fresh
-- [ ] CatterPlots
-- [ ] plumber
-- [ ] Causalbounds
+- [x] dreamRs/fresh
+- [x] CatterPlots
+- [ ] rtweet
+- [ ] thank
+- [ ] esquisse
+- [ ] semantic.dashboard
+- [ ] xaringanExtra
+- [ ] quantmod
+- [ ] waldo
+- [ ] target
+- [ ] blastula
+- [ ] rtodoist
+- [ ] applicable
+- [ ] sloop
+- [ ] withr
+- [ ] pak
+- [ ] pillar
+- [ ] gert
+- [ ] pins
+- [ ] modeltime
+- [ ] finetune
 - [ ] brms
 - [ ] unglue
-- [ ] esquisse
+- [ ] Causalbounds
 
 

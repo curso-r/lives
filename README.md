@@ -5,17 +5,32 @@
 
 # Lista de pacotes para fazer unboxing
 
-  - \[x\] jtrecenti/draft
-  - \[x\] RobertMyles/modelscript
-  - \[x\] allisonhorst/palmerpenguins
-  - \[x\] ThinkR-open/golem
-  - \[x\] jakelawlor/PNWColors
-  - \[x\] palletteer
-  - \[x\] dplyr 1.0
-  - \[x\] dreamRs/fresh
-  - \[ \] "CatterPlots",
-  - \[ \] "plumber",
-  - \[ \] "Causalbounds",
-  - \[ \] "brms",
-  - \[ \] "unglue",
-  - \[ \] "esquisse",
+  - [x] jtrecenti/draft
+  - [x] RobertMyles/modelscript
+  - [x] allisonhorst/palmerpenguins
+  - [x] ThinkR-open/golem
+  - [x] jakelawlor/PNWColors
+  - [x] dreamRs/fresh
+  - [x] CatterPlots
+  - [ ] rtweet
+  - [ ] thank
+  - [ ] esquisse
+  - [ ] semantic.dashboard
+  - [ ] xaringanExtra
+  - [ ] quantmod
+  - [ ] waldo
+  - [ ] target
+  - [ ] blastula
+  - [ ] rtodoist
+  - [ ] applicable
+  - [ ] sloop
+  - [ ] withr
+  - [ ] pak
+  - [ ] pillar
+  - [ ] gert
+  - [ ] pins
+  - [ ] modeltime
+  - [ ] finetune
+  - [ ] brms
+  - [ ] unglue
+  - [ ] Causalbounds
