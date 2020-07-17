@@ -16,6 +16,7 @@
   - [ ] thank
   - [ ] esquisse
   - [ ] semantic.dashboard
+  - [ ] cicerone
   - [ ] xaringanExtra
   - [ ] quantmod
   - [ ] waldo
