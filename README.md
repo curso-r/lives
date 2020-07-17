@@ -13,10 +13,9 @@
   - [x] dreamRs/fresh
   - [x] CatterPlots
   - [ ] rtweet
-  - [ ] thank
+  - [ ] thankr
   - [ ] esquisse
   - [ ] semantic.dashboard
-  - [ ] cicerone
   - [ ] xaringanExtra
   - [ ] quantmod
   - [ ] waldo
