@@ -12,14 +12,14 @@
   - [x] jakelawlor/PNWColors
   - [x] dreamRs/fresh
   - [x] CatterPlots
-  - [ ] rtweet
-  - [ ] thank
-  - [ ] esquisse
-  - [ ] semantic.dashboard
-  - [ ] cicerone
-  - [ ] xaringanExtra
+  - [x] rtweet
+  - [x] thankr
+  - [x] thank
+  - [x] esquisse
+  - [x] semantic.dashboard
+  - [x] xaringanExtra
   - [ ] quantmod
-  - [ ] waldo
+  - [x] waldo
   - [ ] target
   - [ ] blastula
   - [ ] rtodoist
