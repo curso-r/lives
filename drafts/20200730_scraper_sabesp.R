@@ -43,6 +43,11 @@ da_sabesp <- purrr::map_dfr(dias, sabesp_baixar_dia, .id = "dia")
 
 # Tidy -------------------------------------------------------------------------
 
+xml2::read_html("<table><tr><td>1.3</td></tr></table>") %>%
+  xml2::xml_find_first("//table") %>%
+  rvest::html_table() %>%
+  tibble::as_tibble()
+
 # Visualize --------------------------------------------------------------------
 
 da_sabesp %>%
