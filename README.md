@@ -22,6 +22,7 @@
   - [ ] flow
   - [ ] shinydisconnect
   - [ ] pak
+  - [ ] moanr
   - [ ] rtodoist
   - [ ] quantmod
   - [ ] withr
