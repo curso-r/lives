@@ -4,25 +4,9 @@
 # library(tidyverse)
 library(magrittr)
 
-install.packages("shinydisconnect")
+install.packages("electionsBR")
 
-?shinydisconnect::disconnectMessage()
-
-
-# remotes::install_github("datathonbr/moanr")
-library(shiny)
-library(shinydisconnect)
-shinyApp(
-  ui = fluidPage(
-    disconnectMessage(),
-    actionButton("disconnect", "Disconnect the app")
-  ),
-  server = function(input, output, session) {
-    observeEvent(input$disconnect, {
-      session$close()
-    })
-  }
-)
+da <- electionsBR::candidate_fed(2018)
 
 # Import -----------------------------------------------------------------------
 
