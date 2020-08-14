@@ -18,16 +18,23 @@
   - [x] esquisse
   - [x] semantic.dashboard
   - [x] xaringanExtra
-  - [ ] quantmod
   - [x] waldo
+  - [ ] flow
+  - [ ] shinydisconnect
+  - [ ] pak
+  - [ ] moanr
+  - [ ] rtodoist
+  - [ ] quantmod
+  - [ ] withr
+  - [ ] applicable
+  - [ ] drake
+  - [ ] pillar
+  - [ ] ggstatsplot
+  - [ ] disk.frame
+  - [ ] waiter
   - [ ] target
   - [ ] blastula
-  - [ ] rtodoist
-  - [ ] applicable
   - [ ] sloop
-  - [ ] withr
-  - [ ] pak
-  - [ ] pillar
   - [ ] gert
   - [ ] pins
   - [ ] modeltime
