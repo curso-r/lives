@@ -21,11 +21,17 @@ options(htmltools.dir.version = FALSE)
 
 ## Últimas do R
 
-- [Pipe 2.0]()
+- [Pipe 2.0](https://www.tidyverse.org/blog/2020/08/magrittr-2-0/)
 
-- [Último dia de subscrição para o `rstudio::global()`]()
+- [Último dia de subscrição para o `rstudio::global()`](https://blog.rstudio.com/2020/07/17/rstudio-global-call-for-talks)
 
-- [Post sobre treesnip]()
+- [Post sobre treesnip](https://blog.rmhogervorst.nl/blog/2020/08/27/how-to-use-lightgbm-with-tidymodels-framework/)
+
+- Melhores momentos do R Weekly
+
+  - [Palantir Shows Its Cards](https://simplystatistics.org/2020/08/26/palantir-shows-its-cards/)
+  
+  - [Top 40 pacotes de Julho de 2020](https://rviews.rstudio.com/2020/08/27/july-2020-top-40-new-cran-packages/)
 
 
 
