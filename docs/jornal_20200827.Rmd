@@ -1,0 +1,31 @@
+---
+title: "Jornal do R"
+subtitle: "1a edição"
+author: "<img src = 'https://d33wubrfki0l68.cloudfront.net/9b0699f18268059bdd2e5c21538a29eade7cbd2b/67e5c/img/logo/cursor1-5.png' width = '30%'>"
+date: "`r format(Sys.Date(), '%d de %b de %Y')`"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: "css/xaringan-themer.css"
+    nature:
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+## Últimas do R
+
+- [Pipe 2.0]()
+
+- [Último dia de subscrição para o `rstudio::global()`]()
+
+- [Post sobre treesnip]()
+
+
+

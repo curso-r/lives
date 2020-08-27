@@ -1,0 +1,169 @@
+.remark-slide-content:not(.title-slide){
+  background-image: url("https://d33wubrfki0l68.cloudfront.net/295643c6243701ae6a9bac3fb8ad467ff0ce3c84/d1785/img/logo/cursor1-41.png");
+  background-position: 5% 97%;
+  background-size: 160px;
+  padding-left: 100px;
+}
+
+.remark-slide-number{
+  top: 92%;
+  bottom: inherit;
+}
+
+.title-slide{
+  background-image: url("../img/trio-sticker.png");
+  background-position: 53% 98%;
+  background-size: 330px;
+  padding-left: 100px;
+}
+
+body{
+font-family: 'Futura Serif', Palatino, serif;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  width: 100%;
+  display: -webkit-box;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.center {
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+}
+
+.card {
+  background-color: white;
+  width: 250px;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column;
+  padding: 10px;
+  margin: 5px;
+}
+.card h1, .card h2, .card h3, .card h4, .card h5 {
+  margin: 0px;
+  padding: 0px 0px 15px 0px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 20px;
+  color: #282828;
+}
+.card hr {
+  display: block;
+  border: none;
+  height: 3px;
+  font-weight: bold;
+  margin: 0px;
+  -webkit-animation-name: line-show;
+  /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 0.3s;
+  /* Safari 4.0 - 8.0 */
+  animation-name: line-show;
+  animation-duration: 0.6s;
+  -webkit-transition-timing-function: cubic-bezier(0.795, 0, 0.165, 1);
+  transition-timing-function: cubic-bezier(0.795, 0, 0.165, 1);
+  /* custom */
+}
+.card p {
+  margin: 15px 0px 0px 0px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 100;
+  letter-spacing: -0.25px;
+  line-height: 1.25;
+  font-size: 15px;
+  word-break: break-all;
+  word-wrap: pre-wrap;
+  color: #282828;
+  -webkit-animation-name: p-show;
+  /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 1.5s;
+  /* Safari 4.0 - 8.0 */
+  animation-name: p-show;
+  animation-duration: 1.5s;
+}
+.card button {
+  border: none;
+  background-color: salmon;
+  width: 50%;
+  margin: 10px auto;
+  padding: 10px 30px;
+  color: white;
+  font-family: 'Noto Sans KR', sans-serif;
+  text-transform: uppercase;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes line-show {
+  from {
+    margin: 0px 100px;
+  }
+  to {
+    margin: 0px;
+  }
+}
+/* Standard syntax */
+@keyframes line-show {
+  from {
+    margin: 0px 100px;
+  }
+  to {
+    margin: 0px;
+  }
+}
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes p-show {
+  from {
+    color: white;
+  }
+  to {
+    color: #282828;
+  }
+}
+/* Standard syntax */
+@keyframes p-show {
+  from {
+    color: white;
+  }
+  to {
+    color: #282828;
+  }
+}
+
+a, a > code {
+    color: #339999;
+    text-decoration: none;
+}
+
+.remark-code, .remark-inline-code {
+  background: #f0f0f0;
+}
+
+.huge .remark-code { /*Change made here*/
+  font-size: 200% !important;
+}
+
+.tiny .remark-code { /*Change made here*/
+  font-size: 70% !important;
+}
+
+.remark-slide-content code {
+    font-size: 15px;
+}
+
+.remark-slide>.titulo {
+  color: #6495ed;
+  vertical-align: middle;
+  text-align: center;
+}
