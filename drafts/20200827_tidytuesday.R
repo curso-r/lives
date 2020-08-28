@@ -9,7 +9,7 @@ library(magrittr)
 url <- 'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-08-25/chopped.tsv'
 chopped <- readr::read_tsv(url)
 
-DataExplorer::create_report(chopped)
+# DataExplorer::create_report(chopped)
 
 # Visualize --------------------------------------------------------------------
 
@@ -36,7 +36,11 @@ chopped %>%
     ingredientes = stringr::str_split(ingredientes, ", ?")
   ) %>%
   unnest(ingredientes) %>%
-  select(season, season_episode, prato, ingredientes)
+  select(season, season_episode, prato, ingredientes) %>%
+  count(ingredientes, sort = TRUE)
+
+
+usa <- st_as_sf(maps::map("state", fill=TRUE, plot =FALSE))
 
 
 # Model ------------------------------------------------------------------------
