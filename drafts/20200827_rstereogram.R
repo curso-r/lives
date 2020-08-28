@@ -22,6 +22,14 @@ library(rstereogram)
   image_to_magiceye() %>%
   plot()
 
+demo_file <- system.file("extdata", "demo_r.png",
+                         package = "rstereogram", mustWork = TRUE)
+demo_image <- png::readPNG(demo_file)
+
+demo_image %>%
+  image_to_magiceye() %>%
+  plot()
+
 df <- data.frame(
   group = c("Dog", "Cat", "Mouse"),
   value = c(25, 30, 50)
