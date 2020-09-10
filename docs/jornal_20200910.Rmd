@@ -1,0 +1,51 @@
+---
+title: "Jornal do R"
+subtitle: "2ª edição"
+author: "<img src = 'https://d33wubrfki0l68.cloudfront.net/9b0699f18268059bdd2e5c21538a29eade7cbd2b/67e5c/img/logo/cursor1-5.png' width = '30%'>"
+date: "`r format(Sys.Date(), '%d de %b de %Y')`"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: "css/xaringan-themer.css"
+    nature:
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+<!-- inicio font awesome -->
+<script src="https://kit.fontawesome.com/1f72d6921a.js" crossorigin="anonymous"></script>
+<!-- final font awesome -->
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+## Jornal do R
+
+<!-- ### Últimas do R -->
+
+<!-- - ?? -->
+
+<!-- ### R BR -->
+
+<!-- - ??? -->
+
+## Eventos
+
+- [Conferência  Latino-Americana sobre o uso de R em Pesquisa & Desenvolvimento](https://latin-r.com/pt)
+
+  - Virtual, 7 à 9 de outubro
+  
+  - [<i class="fab fa-twitter"></i> Twitter](https://twitter.com/LatinR_Conf), [<i class="fab fa-slack"></i> Slack](http://bit.ly/latinr-slack), [ <i class="fab fa-youtube"></i> Youtube](https://www.youtube.com/channel/UCt950nC6jlh2ELDRPigWOkg/featured)
+    
+  - Workshops:
+
+| Tema de Workshops |  Equipe |
+|--:|--:|
+|  Shiny do zero a hero | Curso-R | 
+|  Apresentações com pacote `xaringan` |  R-Ladies São Paulo |
+|  Manuscritos acadêmicos usando o pacote RMarkdown |  R-Ladies Rio de Janeiro |
+
+
