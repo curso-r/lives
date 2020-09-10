@@ -1,0 +1,27 @@
+---
+title: "Tidytuesday - Chopped"
+author: "Live #6"
+date: "27/08/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Dados
+
+```{r}
+chopped <- readr::read_tsv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-08-25/chopped.tsv')
+```
+
+```{r}
+glimpse(chopped)
+```
+
+```{r}
+library(DataExplorer)
+DataExplorer::
+```
+
