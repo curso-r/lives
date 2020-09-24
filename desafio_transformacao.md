@@ -117,7 +117,7 @@ A base de dados `contratos_covid` foi baixada por nós em uma live da Curso-R.
 |novembro |  3|R$139.575.027,52 |
 
 
-## Desafio 5: Join de bases
+## Desafio 4: Join de bases
 
 A base `varas` contém informações de varas de direito e cartórios do Brasil. Já a base `idhm` contém informações sobre o IDH-Municipal dos municípios do país
 
