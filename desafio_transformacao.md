@@ -96,6 +96,7 @@ A base de dados `sabesp` foi baixada por nós em uma live da Curso-R.
 
 A base de dados `contratos_covid` foi baixada por nós em uma live da Curso-R.
 
+
     Columns: 8
     $ valor_total_contrato <chr> "R$391.000,00", "R$124.000,00", "R$51.800,…
     $ empresa              <chr> "S.M. GUIMARÃES EIRELI - QUALITY", "NDALAB…
