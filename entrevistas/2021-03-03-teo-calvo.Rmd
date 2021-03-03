@@ -1,0 +1,86 @@
+---
+title: "Curso-R EntRevista"
+subtitle: "Téo 'Me Why' Calvo"
+author: "<img src = 'https://d33wubrfki0l68.cloudfront.net/9b0699f18268059bdd2e5c21538a29eade7cbd2b/67e5c/img/logo/cursor1-5.png' width = '30%'>"
+date: "<img src = 'https://static-cdn.jtvnw.net/jtv_user_pictures/6ad38e54-2c63-4f2a-9179-b6d064a3bb37-profile_image-70x70.png' width = '20%'>"
+output:
+  xaringan::moon_reader:
+    css: ["default", "default-fonts", "css/custom-intro.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+
+```{r setup, include=FALSE}
+`%>%` <- magrittr::`%>%`
+
+colorido <- function(x, cor = "#6495ed") {
+  glue::glue(
+    '<span style="color:{cor}; font-weight: bold;">{x}</span>'
+  ) %>% 
+    htmltools::HTML()
+}
+
+options(width = 85)
+
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## News do mundo do R
+
+- Julio Trecenti ----> Professor Julio Trecenti do Insper
+- [useR2021 - Chamada para Trabalhos](https://user2021.r-project.org/participation/call-for-abstracts/)
+    - Começo de inscrições: 15 de Abril 
+    - Datas da conferência: 5 a 9 de Julho (virtual)
+- [novo capitulo livro: rmarkdown](https://livro.curso-r.com/9-1-markdown.html)
+- [post novo do blog](https://blog.curso-r.com/posts/2021-03-02-brasileirao/)
+- [curso de regressão linear: dia 13/03]()
+
+
+---
+
+<a href = 'https://Twitch.tv/teomewhy'>
+```{r}
+knitr::include_graphics("teomewhy_cursor.png")
+```
+</a>
+
+--- 
+
+## Novos streamers de dados
+
+- twitch.tv/jtrecenti - Faxina de dados e Deep Learning em R
+- twitch.tv/datasciencebits - MLOps em Rust/Py/etc
+- twitch.tv/athos_damiani - Machine Learning em R
+- twitch.tv/beamilz - pesquisa reprodutível, análise de dados ambientais no R
+- twitch.tv/fLporto - Começou hoje! Aprendendo R ao vivo.
+
+---
+## CV
+
+- Bacharel em Estatística pela FCT-UNESP
+- Pós graduado em Data Science & Big Data pela UFPR. 
+- Apaixonado por ensino
+- No mercado: 
+    - Coordenador de Customer Centric e Especialista em Ciência de Dados na Via Varejo, 
+    - Analista de CRM no Grupo Boticário, 
+    - Consultor Analítico no SAS Institute. 
+- Principais atividades:
+    - Modelagem preditiva/Machine Learning
+    - Análise de dados
+    - Definições de testes A/B. 
+- Tem facilidade em trabalhar com alta volumetria de dados em ambientes Big Data 
+- Agnóstico à plataformas analíticas
+- Hoje
+- Compõe o corpo docente da escola ASN.Rocks (Introdução ao Python, Algoritmos Classificadores e Regressores)
+
+
+## Pauta
+
+- 
+
+
+
