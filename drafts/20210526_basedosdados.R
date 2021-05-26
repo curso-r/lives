@@ -4,14 +4,13 @@
 # install.packages("basedosdados")
 library(basedosdados)
 
-
 # Geral -------------------------------------------------------------------
 
 # O pacote só tem 4 funções exportadas
 
 basedosdados::download
-basedosdados::get_billing_id
 basedosdados::read_sql
+basedosdados::get_billing_id
 basedosdados::set_billing_id
 
 # Import -----------------------------------------------------------------------
@@ -64,7 +63,7 @@ pib_per_capita_2 <- read_sql(query)
 # https://cloud.google.com/bigquery/docs/cached-results#cache-exceptions
 
 # Como eu posso ver tudo que dá pra baixar no base_dos_dados?
-# https://basedosdados.org/dataset/br-ibge-censo-demografico
+# https://basedosdados.org/dataset/
 
 query <- "SELECT * FROM `basedosdados.br_ibge_censo_demografico.setor_censitario_basico_2010`"
 df <- read_sql(query)
@@ -84,15 +83,19 @@ DBI::dbListTables(con)
 
 library(tidyverse)
 
-tabelona <- tbl(con, "setor_censitario_idade_homens_2010") %>%
-  mutate(id_setor_censitario = as.character(id_setor_censitario)) %>%
-  select(id_setor_censitario, sigla_uf) %>%
+library(bit64)
+
+basico <- tbl(con, "setor_censitario_basico_2010")
+
+tbl(con, "setor_censitario_idade_total_2010") %>%
+  left_join(basico) %>%
+  select(id_setor_censitario) %>%
   head(50) %>%
   collect()
 
 # Vamos brincar com os dados do INEP
 
-conexao <- dbConnect(
+conexao_ideb <- dbConnect(
   bigrquery::bigquery(),
   project = "basedosdados",
   dataset = "br_inep_ideb",
@@ -101,15 +104,44 @@ conexao <- dbConnect(
 
 # Tidy -------------------------------------------------------------------------
 
-
-
-escola <- tbl(conexao, "escola") %>%
-  group_by(estado, municipio) %>%
-  summarise(ideb = mean(ideb)) %>%
+escola <- tbl(conexao_ideb, "escola") %>%
+  group_by(estado_abrev, municipio) %>%
+  summarise(ideb = mean(ideb, na.rm = TRUE)) %>%
+  ungroup() %>%
   collect()
 
 # Visualize --------------------------------------------------------------------
 
+library(tidytext)
+
+escola %>%
+  mutate(
+    municipio = reorder_within(municipio, ideb, estado_abrev)
+  ) %>%
+  mutate(
+    municipio2 = as.numeric(municipio)
+  ) %>%
+  ggplot(aes(x = municipio2, y = ideb, fill = estado_abrev)) +
+  geom_col() +
+  coord_flip() +
+  scale_x_reordered() +
+  facet_wrap(~estado_abrev, nrow = 6, scales = 'free_y')
+
+escola %>%
+  mutate(
+    estado_abrev = fct_reorder(estado_abrev, ideb, median)
+  ) %>%
+  ggplot(aes(x = ideb, y = estado_abrev, fill = estado_abrev)) +
+  ggridges::geom_density_ridges(color = 'transparent', alpha = .6) +
+  scale_fill_viridis_d() +
+  theme_minimal() +
+  labs(
+    x = "IDEB",
+    y = "Estado"
+  ) +
+  theme(
+    legend.position = 'none')
+
 # Export -----------------------------------------------------------------------
 
-# readr::write_rds(d, "")
+readr::write_rds(escola, "analise.rds")
