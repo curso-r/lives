@@ -308,7 +308,9 @@ autoplot(acf(lh))
 
 library(survival)
 
-autoplot(survfit( Surv(futime, fustat)~1, data=ovarian))
+autoplot(survfit(Surv(futime, fustat)~1, data=ovarian))
+
+survminer::ggsurvplot(survfit(Surv(futime, fustat)~1, data=ovarian))
 
 # especificamente sobre modelos de sobrevivencia, tambem existe o survminer
 
