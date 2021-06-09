@@ -1,4 +1,4 @@
-# Extensões de ggplo2 -----------------------------------------------------
+# Extensões de ggplot2 -----------------------------------------------------
 
 # O que é uma extensão de ggplot2?
 
@@ -18,22 +18,26 @@ conexao_ideb <- dbConnect(
   bigrquery::bigquery(),
   project = "basedosdados",
   dataset = "br_inep_ideb",
-  billing = "live-curso-r-bd-2"
+  billing = "plumber-teste-1"
 )
 
 conexao_covid <- dbConnect(
   bigrquery::bigquery(),
   project = "basedosdados",
   dataset = "br_ms_vacinacao_covid19",
-  billing = "live-curso-r-bd-2"
+  billing = "plumber-teste-1"
 )
 
 conexao_populacao <- dbConnect(
   bigrquery::bigquery(),
   project = "basedosdados",
   dataset = "br_ibge_populacao",
-  billing = "live-curso-r-bd-2"
+  billing = "plumber-teste-1"
 )
+
+
+# ctrl shift R ------------------------------------------------------------
+
 
 # ggridges -----------------------------------------------------------------
 
@@ -46,25 +50,28 @@ escola <- tbl(conexao_ideb, "escola") %>%
   ungroup() %>%
   collect()
 
+
 escola %>%
   mutate(
     estado_abrev = fct_reorder(estado_abrev, ideb, .fun = median, na.rm = TRUE)
   ) %>%
   ggplot(aes(x = ideb, y = estado_abrev, fill = estado_abrev)) +
   ggridges::geom_density_ridges(color = 'transparent', alpha = .6) +
-  scale_fill_viridis_d() +
-  theme_minimal() +
+  scale_fill_viridis_d(option = "A", begin = .2, end = .8) +
   labs(
     x = "IDEB",
     y = "Estado"
   ) +
   theme(
-    legend.position = 'none') +
+    legend.position = 'none',axis.text = element_text(size = 4)
+    ) +
   geom_vline(xintercept = 4)
 
 # gganimate ---------------------------------------------------------------
 
 # https://ugoproto.github.io/ugo_r_doc/pdf/gganimate.pdf
+
+ggplot2::theme_set(theme_minimal())
 
 vacinacao_base <- tbl(conexao_covid, "microdados_vacinacao") %>%
   count(sigla_uf, data_aplicacao, dose) %>%
@@ -187,25 +194,98 @@ grafico_por_estado <- vacinacao_base_por_estado %>%
   theme_bw()
 
 grafico_por_regiao <- vacinacao_base_por_regiao %>%
-  #filter(regiao == "Sudeste") %>%
-  #filter(data_aplicacao <= as.Date("2021-04-15")) %>%
+  # filter(regiao %in% c("Sudeste", "Sul")) %>%
   ungroup() %>%
   arrange(data_aplicacao) %>%
-  #mutate(data_aplicacao = as.numeric(data_aplicacao)) %>%
   ggplot(aes(x = data_aplicacao, y = percentual_vacinado, color = regiao)) +
-  #geom_col() +
-  #geom_line(size = 1.2) +
   geom_point(size = 6) +
-  transition_reveal(data_aplicacao) +
+  geom_line() +
   scale_color_viridis_d() +
   theme_bw(20) +
-  shadow_wake(wake_length = 0.5, size = 3) +
-  ease_aes("cubic-in") +
+  transition_reveal(data_aplicacao) + # <<<
+  # shadow_wake(wake_length = 0.5, size = 3) +  # <<<
+  ease_aes("cubic-in") +  # <<<
   labs(x = "Data de referência", "% da população vacinado com a 2a dose")
 
-animate(grafico_por_regiao, height = 600, width =800)
+animate(grafico_por_regiao, height = 600, width =800,end_pause = 10)
 
 anim_save("animacao.gif", animation = grafico_por_regiao, height = 600, width =800)
+
+
+
+
+iris %>%
+  ggplot(aes(x = Sepal.Length, y = Sepal.Width)) +
+  geom_point() +
+  transition_states(Species)
+
+
+
+
+
+# gganimate - exemplo do overfiting ---------------------------------------
+
+library(purrr)
+library(broom)
+library(tidyverse)
+library(gganimate)
+
+set.seed(1)
+theme_set(theme_minimal(20))
+
+criar_amostra <- function(n) {
+  tibble(
+    x = runif(n, 0, 20),
+    y = 500 + 0.4 * (x-10)^3 + rnorm(n, sd = 50)
+  )
+}
+
+df_treino <- criar_amostra(10)
+df_teste <- criar_amostra(10)
+
+ggplot(df_treino, aes(x = x, y = y)) +
+  geom_point()
+
+ajusta_polinomio <- function(p, data) {
+  lm(as.formula(paste0("y ~ poly(x, ", p, ")")), data = data)
+}
+
+grid_x <- tibble(x = seq(min(df_treino$x), max(df_treino$x),length.out = 500))
+
+polinomios <- tibble(
+  grau = 1:9
+) %>%
+  mutate(
+    modelo_polinomial = map(grau, ajusta_polinomio, data = df_treino),
+    dados_grafico = map(modelo_polinomial, ~ {
+      grid_x %>% mutate(y = predict(.x, newdata = .))
+    })
+  ) %>%
+  select(grau, dados_grafico) %>%
+  unnest("dados_grafico")
+
+gif <- polinomios %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_line(show.legend = FALSE, colour = "purple", size = 1) +
+  geom_point(aes( colour = "TREINO"), data = df_treino, size = 4) +
+  geom_point(aes( colour = "TESTE"), data = df_teste, size = 3) +
+  coord_cartesian(ylim = (c(-200,1300))) +
+  labs(colour = "") +
+  labs(title = 'Grau do polinômio: {closest_state}') +
+  transition_states(grau,
+                    transition_length = 2,
+                    state_length = 2,
+                    wrap = TRUE)
+
+animate(gif, height = 400, width =650)
+gganimate::save_animation(gganimate::last_animation(), file = "overfiting.gif")
+
+
+
+
+
+
+
 
 
 # patchwork + grid --------------------------------------------------------
@@ -213,16 +293,18 @@ anim_save("animacao.gif", animation = grafico_por_regiao, height = 600, width =8
 library(patchwork)
 library(ggplot2)
 library(magrittr)
+library(tvthemes)
+theme_set(tvthemes::theme_brooklyn99())
 
 # primeiro grafico
 g1 <- dados::pinguins %>%
   ggplot(aes(x = comprimento_bico, y = profundidade_bico)) +
-  geom_point()
+  geom_point(colour = "orange")
 
 # segundo grafico
 g2 <- dados::pinguins %>%
   ggplot(aes(x = profundidade_bico)) +
-  geom_density()
+  geom_density(colour = "white")
 
 # terceiro grafico
 g3 <- dados::pinguins %>%
@@ -232,7 +314,7 @@ g3 <- dados::pinguins %>%
 # codigo usando o pacote patchwork
 # aqui usamos esse operador '+' (que também poderia ser `|`), que fica disponível
 # quando carregamos o pacote
-g1 + g2 + g3
+g1 | g2 | g3 | g1 | g2 | g3
 
 # codigo usando o pacote patchwork
 # aqui usamos esse operador '/', que fica disponível
@@ -268,13 +350,7 @@ tabela <- dados::pinguins %>%
 
 ((
   # gráfico
-  (# primeira coluna
-    (g2 / g3) |
-      # segunda coluna
-      g1) +
-    # alterando a largura
-    plot_layout(widths = c(1, 2)
-    )
+  ((g2 / g3) | g1) +  plot_layout(widths = c(1, 2))
 ) +
     #
     plot_annotation(
@@ -290,9 +366,8 @@ tabela <- dados::pinguins %>%
 
 # https://github.com/sinhrks/ggfortify
 
-install.packages("ggfortify")
-
 library(ggfortify)
+theme_set(theme_minimal())
 
 ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
 trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
@@ -302,36 +377,75 @@ lm.D9 <- lm(weight ~ group)
 
 # Exemplo modelo linear
 autoplot(lm.D9)
+plot(lm.D9)
 
 # Exemplo ACF
-autoplot(acf(lh))
+autoplot(acf(lh)) +
+  geom_hline(yintercept = 0, colour = "red", size = 2)
 
 library(survival)
+a <- autoplot(survfit( Surv(futime, fustat)~1, data=ovarian)) +
+  geom_point(colour = "red")
 
-autoplot(survfit( Surv(futime, fustat)~1, data=ovarian))
+library(cowplot)
+b <- add_sub(a, expression(paste(a^2+b^2, " = ", c^2)))
+ggdraw(b)
+b2 <- b
+ggdraw(b)
+
+a <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point()
+
+a +
+  cowplot::draw_label(label = expression(paste(a^2+b^2, " = ", c^2)), x = 6, y = 4, colour = "red", size = 100)
+
 
 # especificamente sobre modelos de sobrevivencia, tambem existe o survminer
 
 # gghighlight -------------------------------------------------------------
+library(gghighlight)
+
+diamonds %>%
+  filter()
 
 diamonds %>%
   ggplot(aes(x = carat, y = price)) +
   geom_point() +
-  gghighlight::gghighlight(carat > 4, label_key = carat) +
+  gghighlight(carat > 4 | price > 18000, label_key = cut) +
   cowplot::theme_minimal_grid()
+
+d <- cranlogs::cran_downloads(
+  packages = tidyverse::tidyverse_deps()$package,
+  from = "2019-01-01", to = "2019-12-31"
+) %>%
+  mutate(
+    grupo = case_when(
+      package %in% c("broom", "magrittr") ~ "grupo 1",
+      TRUE ~ "grupo 2"
+    )
+  )
+
+diamonds %>%
+  group_by() %>%
+  filter()
+
+d %>%
+  ggplot(aes(x = date, y = count, group = package)) +
+  geom_line() +
+  gghighlight::gghighlight(max(count) > 5000)
 
 # ggrepel -----------------------------------------------------------------
 
 library(ggrepel)
-
+ggrepel::
 escola %>%
   filter(ano == "2019", estado_abrev == "SP") %>%
   ggplot(aes(x = saeb_matematica, y = saeb_portugues, label = municipio)) +
   geom_point() +
   # feio
-  #geom_text() +
+  # geom_text() +
   # bonito
-  geom_text_repel() +
+  geom_label_repel(max.overlaps = 10) +
   theme_minimal(15)
 
 # esquisse ----------------------------------------------------------------
@@ -354,3 +468,41 @@ p2 <- ggedit(p)
 names(p2) # will show you which objects are available.
 plot(p2)
 
+
+windowsFonts()
+library(extrafont)
+extrafont::loadfonts(device = "win")
+windows()
+extrafont::fonts()
+p + theme(text = element_text(family = "serif"))
+p + theme(text = element_text(family = "mono", size = 25))
+
+
+
+# ggside + ggdendro -------------------------------------------------------
+library(ggside)
+library(ggdendro)
+library(dendsort)
+
+
+
+model <- hclust(dist(t(mtcars)), "single")
+dendro <- as.dendrogram(model)
+dendro <- dendsort(dendro)
+
+p2 <- ggdendrogram(dendro) + theme_void()
+p1 <- mtcars[,order.dendrogram(dendro)] %>%
+  rownames_to_column() %>%
+  pivot_longer(-rowname) %>%
+  mutate(
+    name = fct_inorder(name)
+  ) %>%
+  group_by(name) %>%
+  mutate(
+    value = (value - mean(value))/sd(value)
+  ) %>%
+  ggplot() +
+  geom_tile(aes(x = name, y = rowname, fill = value))
+
+library(patchwork)
+p2/p1
