@@ -399,6 +399,9 @@ a <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
 a +
   cowplot::draw_label(label = expression(paste(a^2+b^2, " = ", c^2)), x = 6, y = 4, colour = "red", size = 100)
 
+autoplot(survfit(Surv(futime, fustat)~1, data=ovarian))
+
+survminer::ggsurvplot(survfit(Surv(futime, fustat)~1, data=ovarian))
 
 # especificamente sobre modelos de sobrevivencia, tambem existe o survminer
 
