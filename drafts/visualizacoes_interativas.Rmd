@@ -1,0 +1,95 @@
+---
+title: "Visualizações Interativas"
+output: 
+  prettydoc::html_pretty:
+    theme: "cayman"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, messages = FALSE, error = FALSE, warning = FALSE, results = TRUE)
+```
+
+# Crosstalk
+
+```{r, cache = TRUE, eval = FALSE}
+# exempl motivador 
+
+https://matt-dray.github.io/earl18-crosstalk/04_leaflet-flexdash-dt-crosstalk.html
+```
+
+```{r}
+library(crosstalk)
+library(leaflet)
+library(DT)
+library(plotly)
+library(dados)
+
+# Wrap data frame in SharedData
+dados <- highlight_key(dados::dados_gapminder)
+
+gg <- ggplot(dados, aes(ano, pib_per_capita, color = continente)) +
+  geom_smooth(se = FALSE) + 
+  theme_minimal()
+
+filter <- bscols(
+  filter_select("id", "Selecione um continente", dados, ~continente, multiple = TRUE),
+  ggplotly(gg, dynamicTicks = FALSE),
+  widths = c(12,12)
+)
+
+dados2 <- highlight_key(dados::dados_gapminder, ~pais, "Selecione o país")
+gg <- ggplot(dados) +
+  geom_line(aes(ano, pib_per_capita, group = pais)) + 
+  theme_minimal()
+
+select <- highlight(
+  ggplotly(gg, tooltip = "pais"), 
+  selectize = FALSE, persistent = TRUE,
+  multiple = FALSE
+)
+
+bscols(filter, select)
+```
+
+```{r}
+library(crosstalk)
+library(leaflet)
+library(DT)
+library(plotly)
+library(reactable)
+library(dados)
+
+# Wrap data frame in SharedData
+dados <- SharedData$new(dados::dados_gapminder, group = "grupo")
+
+gg <- ggplot(dados, aes(ano, pib_per_capita, color = continente)) +
+  geom_smooth(size = 2, se = FALSE) + 
+  #geom_point(alpha = .5) + 
+  theme_minimal()
+
+tabela <- reactable(dados, searchable = TRUE,
+                    #selection = "multiple",
+                    #defaultSelected = 1:5,
+                    #onClick = "select",
+                    groupBy = "continente",
+                    columns = list(
+                      expectativa_de_vida = colDef(aggregate = 'median'),
+                      populacao = colDef(aggregate = 'median'),
+                      pib_per_capita = colDef(aggregate = 'median')
+                    )
+                    )
+
+filtros <- bscols(
+    filter_select("id", "Selecione um continente",
+                  dados, ~continente, multiple = FALSE),
+  ggplotly(gg, dynamicTicks = TRUE), widths = c(12, 12)
+)
+
+visualizacoes <- bscols(
+  filter_slider("id2", "Selecione o ano de início", dados, ~ano),
+  tabela, widths = c(12, 12)
+  )
+
+bscols(filtros, visualizacoes)
+```
+
