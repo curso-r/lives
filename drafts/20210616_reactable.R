@@ -22,7 +22,7 @@ mtcars %>%
     columns = list(
       .rownames = colDef(maxWidth = 180),
       mpg = colDef(style = color_scales(mtcars), format = colFormat(prefix = "R$")),
-      cyl = colDef(style = color_tiles(mtcars))
+      cyl = colDef(cell = icon_assign(mtcars))
     )
   )
 
@@ -51,8 +51,7 @@ tabela_transposta %>%
       sd = colDef(format = colFormat(digits = 2))
     ),
     details = function(i) {
-      # plotly::ggplotly(qplot(tabela_transposta$valores[[i]], bins = 10))
-      reactable(iris)
+      plotly::ggplotly(qplot(tabela_transposta$valores[[i]], bins = 10))
     }
   )
 
@@ -70,14 +69,8 @@ iris %>%
   reactable(
     groupBy = "Species",
     defaultColDef = colDef(
-      aggregate = "mean"
+      aggregate = "sum"
     )
   )
 
-# highcharter -------------------------------------------------------------
 
-library(highcharter)
-highcharter::hchart(mtcars$mpg)
-
-mtcars %>%
-  hchart("histogram", hcaes(x = "mpg"))
