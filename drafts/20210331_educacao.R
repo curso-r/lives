@@ -102,6 +102,7 @@ dados_brutos <- todas_ufs %>%
 
 
 dim(dados_brutos)
+# write_rds(dados_brutos, "dados_brutos_educacao.rds")
 
 mapa_estados <- geobr::read_state()
 
