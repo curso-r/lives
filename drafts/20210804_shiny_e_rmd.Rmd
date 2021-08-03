@@ -1,0 +1,87 @@
+---
+title: "Relatório"
+output: html_document
+params:
+  pessoa: "S[oô]nia[A-za-z ]+Braga"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(basesCursoR)
+library(tidyverse)
+
+filmes_da_pessoa <- basesCursoR::imdb %>% 
+  filter(
+    stringr::str_detect(direcao, params$pessoa) |
+    stringr::str_detect(elenco, params$pessoa)
+  )
+```
+
+# 
+
+```{r}
+library(ggridges)
+
+filmes_da_pessoa %>% 
+  mutate(
+    ano_agrupado = cut(ano, seq(1980, 2020, 5))
+  ) %>% 
+  ggplot(aes(y = ano_agrupado, x = nota_imdb)) + 
+  geom_density_ridges()
+```
+
+
+```{r}
+filmes_da_pessoa %>% 
+  mutate(data_lancamento = as.Date(data_lancamento)) %>% 
+  highcharter::hchart('point', highcharter::hcaes(x = data_lancamento, y = nota_imdb)) %>% 
+  highcharter::hc_tooltip(
+    pointFormat = "Ano de lançamento: {point.ano} <br> Título do filme: {point.titulo_original} <br> Nota: {point.y} <br> Número de avaliações: {point.num_criticas_critica}"
+  )
+```
+
+
+```{r}
+
+library(gghighlight)
+
+nota_dos_melhores_filmes <- quantile(filmes_da_pessoa$nota_imdb, .9)
+
+nota_dos_piores_filmes <- quantile(filmes_da_pessoa$nota_imdb, .1)
+
+filmes_da_pessoa %>% 
+  mutate(
+    data_lancamento = as.Date(data_lancamento) ) %>% 
+  # mutate(
+  #   data_lancamento = as.Date(data_lancamento),
+  #   ano_arredondado = lubridate::floor_date(data_lancamento, 'year')
+  # ) %>% 
+  #group_by(ano) %>% 
+  #summarise(
+  #  freq = n(),
+  #  receita = mean(receita, na.rm = TRUE),
+  #  nota_media = mean(nota_imdb, na.rm = TRUE)
+  #) %>% 
+  ungroup() %>% 
+  mutate(grupo = 1) %>% 
+  ggplot(aes(x = data_lancamento, y = nota_imdb,
+             group = grupo)) + 
+  # ggplot(aes(x = data_lancamento, y = nota_imdb)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) +
+  theme(
+    legend.position = 'none'
+  ) +
+  theme_minimal() + 
+  labs(
+    x = "Ano de lançamento do filme",
+    y = "Nota média no ano"
+  ) +
+  gghighlight(nota_imdb >= nota_dos_melhores_filmes,
+              label_key = titulo_original) +
+  scale_y_continuous(limits = c(0, 10))
+```
+
