@@ -1,0 +1,13 @@
+name: exemplo-sabesp
+title: exemplo-sabesp
+username:
+account: rseis
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2629312
+bundleId: 3456879
+url: https://rseis.shinyapps.io/exemplo-sabesp/
+when: 1596153333.64531
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: README.md|README.Rmd|teste.png|drafts
