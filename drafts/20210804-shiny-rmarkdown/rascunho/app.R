@@ -32,9 +32,8 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
 
-  output$grafico <- renderPlot({
-
-    filmes_da_pessoa <- basesCursoR::pegar_base("imdb") %>%
+  filmes_da_pessoa <- eventReactive(input$recomendar, {
+    basesCursoR::pegar_base("imdb") %>%
       mutate(
         data_lancamento = as.Date(data_lancamento)
       ) %>%
@@ -42,20 +41,25 @@ server <- function(input, output, session) {
         stringr::str_detect(direcao, input$pessoa) |
           stringr::str_detect(elenco, input$pessoa)
       )
+  })
 
-    nota_dos_melhores_filmes <- quantile(filmes_da_pessoa$nota_imdb, .9)
-    tab_melhores <- filmes_da_pessoa %>%
+  output$grafico <- renderPlot({
+
+    req(filmes_da_pessoa())
+
+    nota_dos_melhores_filmes <- quantile(filmes_da_pessoa()$nota_imdb, .9)
+    tab_melhores <- filmes_da_pessoa() %>%
       filter(nota_imdb >= nota_dos_melhores_filmes) %>%
       select(data_lancamento, titulo_original, nota_imdb) %>%
       arrange(desc(nota_imdb))
 
-    nota_dos_piores_filmes <- quantile(filmes_da_pessoa$nota_imdb, .1)
-    tab_piores <- filmes_da_pessoa %>%
+    nota_dos_piores_filmes <- quantile(filmes_da_pessoa()$nota_imdb, .1)
+    tab_piores <- filmes_da_pessoa() %>%
       filter(nota_imdb <= nota_dos_piores_filmes) %>%
       select(data_lancamento, titulo_original, nota_imdb, num_avaliacoes) %>%
       arrange(desc(nota_imdb))
 
-    filmes_da_pessoa %>%
+    filmes_da_pessoa() %>%
       filter(nota_imdb > nota_dos_piores_filmes, nota_imdb < nota_dos_melhores_filmes) %>%
       ggplot(aes(x = data_lancamento, y = nota_imdb)) +
       geom_point(color = "grey") +
