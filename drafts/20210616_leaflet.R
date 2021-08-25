@@ -35,6 +35,8 @@ library(leaflet)
 library(leaflet.providers)
 library(leaflet.extras)
 
+
+
 providers <- get_providers()
 leaflet_map <- da %>%
   leaflet() %>%
@@ -42,7 +44,8 @@ leaflet_map <- da %>%
   addTiles(urlTemplate = providers$providers_details$OpenRailwayMap$url) %>%
   setView(-55,-13, 5) %>%
   addHeatmap(~lng, ~lat, intensity = .001, radius = 20, blur = 10) %>%
-  addMarkers(~lng, ~lat, data = sample_n(da, 100)) %>%
+  addMarkers(~lng, ~lat, data = sample_n(da, 100), clusterOptions = markerClusterOptions()) %>%
+  addCircleMarkers(~lng, ~lat, data = sample_n(da, 100), stroke = NA, color = "red", fillOpacity = 1) %>%
   addDrawToolbar() %>%
   addMeasurePathToolbar() %>%
   addControlGPS(
@@ -60,12 +63,12 @@ leaflet_map
 library(shiny)
 
 ui <- fluidPage(
-  leafletOutput('map'),
+  leafletOutput('map'), ########################
   verbatimTextOutput("input")
 )
 
 server <- function(input, output, session) {
-  output$map <- renderLeaflet({
+  output$map <- renderLeaflet({ ######################
     leaflet_map
   })
 

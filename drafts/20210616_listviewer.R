@@ -17,6 +17,17 @@ reactjson(
   )
 )
 
+listviewer::jsonedit(
+  list(
+    array = c(1,2,3)
+    ,boolean = TRUE
+    ,null = NULL
+    ,number = 123
+    ,object = list( a="b", c="d" )
+    ,string = "Hello World"
+  )
+)
+
 
 # shinyzinho ----------------------
 library(shiny)
