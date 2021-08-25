@@ -29,6 +29,7 @@ library(torchvision)
 library(tidyverse)
 library(mestrado)
 library(patchwork)
+library(magrittr)
 ```
 
 ## Dados com {torchdatasets}
@@ -70,7 +71,7 @@ cria_template_bolinha <- function(kernel_size = 5) {
                                                   1, 1, 1, 1, 1,
                                                   1, 1, 1, 1, 1,
                                                   0, 1, 1, 1, 0), dim = c(5,5)))
-  conv$parameters$weight$requires_grad_(FALSE) # torch, não otimizar esses params
+  conv$parameters$weight$requires_grad_(FALSE) # torch, favor não otimizar esses params
   conv$weight[1,1] <- template_bolinha
   conv
 }
@@ -248,7 +249,7 @@ for(batch in enumerate(train_dl)) {
 plot(losses, type = "l", col = "royalblue")
 ```
 
-## Predições
+## Predições da base teste
 
 ```{r}
 submition_dl <- dataloader(submition, batch_size = 50000)
@@ -266,6 +267,22 @@ write_csv(df, "submit_modelo1.csv")
 hist(df$corr)
 hist(train$images$corr)
 ```
+
+## predicao de um print screen
+
+```{r}
+printscreen <- torchvision::magick_loader("content/blog/Screenshot from 2021-01-10 19-43-17.png")
+
+printscreen_torch <- printscreen %>%
+  torchvision::transform_to_tensor() %>%
+  torchvision::transform_rgb_to_grayscale() %>%
+  torch::torch_unsqueeze(1) %>%
+  torch::torch_unsqueeze(1)
+
+correlacao_predita <- modelo1(printscreen_torch)
+as.numeric(correlacao_predita)
+```
+
 
 
 ## Modelo2
@@ -346,19 +363,6 @@ for(batch in enumerate(train_dl)) {
 plot(losses, type = "l", col = "royalblue")
 ```
 
-```{r}
-library(magrittr)
-printscreen <- torchvision::magick_loader("content/blog/Screenshot from 2021-01-10 19-43-17.png")
-
-printscreen_torch <- printscreen %>% # operador "então" "depois"
-  torchvision::transform_to_tensor() %>%
-  torchvision::transform_rgb_to_grayscale() %>%
-  torch::torch_unsqueeze(1) %>%
-  torch::torch_unsqueeze(1)
-
-correlacao_predita <- modelo1(printscreen_torch)
-as.numeric(correlacao_predita)
-```
 
 
 
