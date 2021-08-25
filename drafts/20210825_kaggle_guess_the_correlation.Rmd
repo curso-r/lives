@@ -147,7 +147,7 @@ minha_collate_fn <- function(batch) {
 
 ```{r}
 train_dl <- dataloader(
-  train, batch_size = 32, 
+  train, batch_size = 64, 
   shuffle = TRUE, 
   collate_fn = minha_collate_fn
 )
@@ -202,6 +202,7 @@ modelo_corr <- torch::nn_module(
 )
 
 modelo1 <- modelo_corr()
+modelo1 <- modelo1$to(device = device)
 
 print(modelo1)
 ```
@@ -233,17 +234,19 @@ plot(1:length(train_dl), numeric(length(train_dl)), type = "l", ylim = c(0, 0.5)
 for(batch in enumerate(train_dl)) {
   i <- i + 1
   otimizador$zero_grad()
-  y_pred <- batch[[1]] %>% 
+  y_pred <- batch[[1]]$to(device = device)
+  y_pred <- y_pred %>% 
     torchvision::transform_crop(5, 22, 125, 127) %>% 
     modelo1()
-  y_obs <- batch[[2]]
+  y_obs <- batch[[2]]$to(device = device)
   loss <- criterio(y_pred, y_obs)
   loss$backward()
-  losses <- c(losses, as.numeric(loss))
+  loss_cpu <- as.numeric(loss$to(device = "cpu"))
+  losses <- c(losses, loss_cpu)
   otimizador$step()
-  pb$tick(tokens = list(loss = sqrt(as.numeric(loss))))
+  pb$tick(tokens = list(loss = sqrt(loss_cpu)))
   if(i %% 10 == 0)
-    points(i, as.numeric(loss))
+    points(i, loss_cpu)
 }
 
 plot(losses, type = "l", col = "royalblue")
