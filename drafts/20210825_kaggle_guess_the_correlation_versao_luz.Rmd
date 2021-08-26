@@ -78,8 +78,7 @@ cria_template_bolinha <- function(kernel_size = 5) {
 
 transforma_imagem <- function(x) {
   # retira os eixos da imagem
-  x <- x %>% 
-    torchvision::transform_crop(5, 22, 125, 127)
+  x <- x
   
   ldim_x <- length(dim(x))
   while(length(dim(x)) < 4) x <- x$unsqueeze(if(ldim_x == 2) 1 else 2)
