@@ -221,15 +221,23 @@ criterio <- torch::nn_mse_loss()
 
 ## Optimizer
 
-```{r}
-otimizador <- torch::optim_adam(modelo1$parameters, lr = 0.01)
-```
-
 ## Loop de treinamento
 
 ```{r}
-# USAR LUZ NESSA PARTE DO LOOP DE TREINAMENTO
+library(luz)
 
+fitted <- modelo_corr %>%
+  setup(
+    loss = criterio,
+    optimizer = torch::optim_adam
+  ) %>%
+  set_opt_hparams(lr = 0.01) %>%
+  fit(train_dl, epochs = 1, valid_data = train_dl)
+# USAR LUZ NESSA PARTE DO LOOP DE TREINAMENTO
+```
+
+
+```{r}
 losses <- c()
 # we can then loop trough the elements of the dataloader with
 i <- 0
@@ -286,7 +294,8 @@ printscreen_torch <- printscreen %>%
   torch::torch_unsqueeze(1) %>%
   torch::torch_unsqueeze(1)
 
-correlacao_predita <- modelo1(printscreen_torch$to(device = device))
+luz::luz_save(fitted, "modelo_guess_the_correlation")
+correlacao_predita <- fitted$model(printscreen_torch$to(device = device))
 as.numeric(correlacao_predita$to(device = "cpu"))
 ```
 
