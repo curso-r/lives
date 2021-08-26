@@ -78,7 +78,8 @@ cria_template_bolinha <- function(kernel_size = 5) {
 
 transforma_imagem <- function(x) {
   # retira os eixos da imagem
-  x <- x 
+  x <- x %>% 
+    torchvision::transform_crop(5, 22, 125, 127)
   
   ldim_x <- length(dim(x))
   while(length(dim(x)) < 4) x <- x$unsqueeze(if(ldim_x == 2) 1 else 2)
@@ -294,7 +295,7 @@ printscreen_torch <- printscreen %>%
   torch::torch_unsqueeze(1) %>%
   torch::torch_unsqueeze(1)
 
-luz::luz_save(fitted, "modelo_guess_the_correlation")
+luz::luz_save(fitted, "modelo_guess_the_correlation2")
 correlacao_predita <- fitted$model(printscreen_torch$to(device = device))
 as.numeric(correlacao_predita$to(device = "cpu"))
 ```
