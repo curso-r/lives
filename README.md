@@ -36,3 +36,5 @@
   - [ ] unglue
   - [ ] Causalbounds
   - [ ] [metathis](https://github.com/gadenbuie/metathis)
+  - [ ] epoxy
+  - [ ] box
