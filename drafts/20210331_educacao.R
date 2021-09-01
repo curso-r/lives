@@ -136,10 +136,11 @@ da %>%
   tidyr::drop_na() %>%
   leaflet::leaflet() %>%
   leaflet::addTiles() %>%
-  leaflet.extras::addHeatmap(~lng, ~lat, intensity = .001,
-                             radius = 20,
-                             blur = 10)
-
+  leaflet.extras::addHeatmap(
+    ~lng, ~lat, intensity = .001,
+    radius = 20,
+    blur = 10
+  )
 
 library(ggplot2)
 mapa_estados <- dados_brutos %>%

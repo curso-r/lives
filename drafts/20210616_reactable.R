@@ -1,5 +1,5 @@
 #' Author: Athos e Fernando
-#' Subject: reactable + highcharter
+#' Subject: reactable
 
 library(tidyverse)
 library(magrittr)
@@ -10,19 +10,31 @@ library(reactablefmtr)
 library(sparkline)
 
 # um data.frame
-reactable(mtcars)
+reactable(mtcars,
+          sortable = TRUE,
+          resizable = TRUE,
+          filterable = TRUE)
+
+a <- viridis::magma(5)
+
+a <- c("#ffffff", "#000000", "#ffffff")
 
 mtcars %>%
   reactable(
+    defaultPageSize = 15,
     wrap = FALSE,
-    defaultColDef = colDef(resizable = TRUE, maxWidth = 70),
+    defaultColDef = colDef(resizable = TRUE, maxWidth = 50),
     details = function(i) {
       i
     },
     columns = list(
       .rownames = colDef(maxWidth = 180),
-      mpg = colDef(style = color_scales(mtcars), format = colFormat(prefix = "R$")),
-      cyl = colDef(cell = icon_assign(mtcars))
+      mpg = colDef(style = color_scales(mtcars, colors = a), format = colFormat(percent = TRUE)),
+      cyl = colDef(cell = icon_assign(mtcars)),
+      disp = colDef(cell = data_bars(
+        mtcars,
+        fill_color = c("#d7191c", "#1a9641", "#d7191c"))
+      )
     )
   )
 
@@ -51,7 +63,11 @@ tabela_transposta %>%
       sd = colDef(format = colFormat(digits = 2))
     ),
     details = function(i) {
-      plotly::ggplotly(qplot(tabela_transposta$valores[[i]], bins = 10))
+      shiny::tagList(
+        shiny::h1("OPA"),
+        reactable(iris),
+        plotly::ggplotly(qplot(tabela_transposta$valores[[i]], bins = 10))
+      )
     }
   )
 
@@ -67,7 +83,7 @@ mtcars %>%
 # grouped
 iris %>%
   reactable(
-    groupBy = "Species",
+    groupBy = c("Species", "Sepal.Length"),
     defaultColDef = colDef(
       aggregate = "sum"
     )

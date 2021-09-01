@@ -1,0 +1,388 @@
+---
+title: "Kaggle: Guess The Correlation (feat. {torchdatasets})"
+date: "2021-01-10"
+tags: ["torch", "deep learning", "r", "machine learning"]
+categories: ["tutoriais", "r"]
+banner: "img/banners/guess-the-correlation.png"
+author: ["Athos"]
+summary: "Solução para o Kaggle Guess The Correlation com {torch}."
+draft: true
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE, 
+  message = FALSE, 
+  collapse = TRUE,
+  eval = FALSE
+)
+```
+
+```{r setup}
+library(torch)
+library(torchdatasets)
+library(torchvision)
+library(tidyverse)
+library(mestrado)
+library(patchwork)
+library(magrittr)
+```
+
+## Dados com {torchdatasets}
+
+```{r}
+
+train <- guess_the_correlation_dataset(
+  root = "~/datasets", 
+  token = "~/kaggle.json", 
+  download = TRUE, 
+  split = "train"
+)
+
+submition <- guess_the_correlation_dataset(
+  root = "~/datasets", 
+  token = "~/kaggle.json",
+  download = TRUE, 
+  split = "submition"
+)
+```
+
+Olhada no banco de dados
+
+```{r}
+# Número de imagens na base de treino
+length(train)
+# lista de ids e Y da base de treino
+head(train$images)
+# Dimensão das imagens
+dim(train[2]$x)
+```
+
+
+```{r}
+cria_template_bolinha <- function(kernel_size = 5) {
+  conv <- torch::nn_conv2d(1, 1, kernel_size, bias = FALSE)
+  template_bolinha <- torch::torch_tensor(array(c(0, 1, 1, 1, 0,
+                                                  1, 1, 1, 1, 1,
+                                                  1, 1, 1, 1, 1,
+                                                  1, 1, 1, 1, 1,
+                                                  0, 1, 1, 1, 0), dim = c(5,5)))
+  conv$parameters$weight$requires_grad_(FALSE) # torch, favor não otimizar esses params
+  conv$weight[1,1] <- template_bolinha
+  conv
+}
+
+transforma_imagem <- function(x) {
+  # retira os eixos da imagem
+  x <- x
+  
+  ldim_x <- length(dim(x))
+  while(length(dim(x)) < 4) x <- x$unsqueeze(if(ldim_x == 2) 1 else 2)
+  
+  # cria a máscara de centros das bolinhas
+  x <- x %>%
+    torch::torch_squeeze() %>%
+    torch::torch_less(0.1)
+  
+  x
+}
+
+# x tem dimensao (H, W)
+transforma_correlacao <- function(x) {
+  # encontra as coordenadas dos centros das bolinhas (X, Y)
+  x <- torch::torch_nonzero(x)
+  
+  # calcula a correlação de pearson entre as coordenadas das bolinhas (X, Y)
+  # mean((x - mean(x)) * (y - mean(y)))/(sd(x)*sd(y))
+  media_desvpad <- torch::torch_std_mean(x$to(dtype = torch::torch_float()), dim = 1)
+  desvpad <- media_desvpad[[1]]
+  media <- media_desvpad[[2]]
+  
+  corr <- x %>% 
+    torch_subtract(media) %>% 
+    torch_prod(dim = 2) %>% 
+    torch_mean() %>%
+    torch_divide(torch_prod(desvpad)) %>%
+    torch_multiply(-1)
+  
+  corr
+}
+```
+
+```{r}
+#
+formato_para_o_ggplot <- function(item_do_df) {
+  item_do_df$x %>%
+    image_tensors_to_tbl() %>% 
+    mutate(resp = paste("corr: ", scales::percent(item_do_df$y)))
+}
+
+map(1:5, ~train[.x]) %>% 
+  map(~{.x$x <- transforma_imagem(.x$x); .x}) %>%
+  map_dfr(formato_para_o_ggplot) %>% 
+  mutate(c1 = c1/max(c1)) %>%
+  ggpixelgrid(ncol = 4, label = resp) 
+```
+
+
+## Dataloader
+
+```{r}
+# empilhar varias imagens (64, 150, 150)
+minha_collate_fn <- function(batch) {
+  batch_transposto <- purrr::transpose(batch)
+  
+  x <- torch::torch_stack(batch_transposto$x)
+  y <- torch::torch_tensor(unlist(batch_transposto$y), dtype = torch::torch_float())
+  id <- unlist(batch_transposto$id)
+  
+  list(x = x, y = y, id = id)
+}
+```
+
+
+```{r}
+train_dl <- dataloader(
+  train, 
+  batch_size = 64, 
+  shuffle = TRUE, 
+  collate_fn = minha_collate_fn
+)
+
+```
+
+
+## Device
+
+```{r}
+device <- torch_device(if(cuda_is_available()) "cuda" else "cpu")
+```
+
+
+## Modelo
+
+### Modelo1
+
+Apelar para calcular a correlação de pearson dos pontos da imagem.
+1) achar o centro dos pontos
+2) calcular a correlação entre X e Y desses centros
+
+```{r}
+# NN module
+modelo_corr <- torch::nn_module(
+  "ModeloCorr",
+  initialize = function() {
+    self$lin <- nn_linear(
+      in_features = 1, 
+      out_features = 1, 
+      bias = TRUE
+    )
+  },
+  
+  forward = function(batch) { # 64, 150, 150
+    # ceu estrelado
+    x <- batch %>% transforma_imagem() 
+    
+    # certifica que tem a dimensao do Batch
+    if(length(dim(x)) < 3) x <- x$unsqueeze(1)
+    
+    # correlação de pearson
+    x <- purrr::map(
+      torch::torch_unbind(x), 
+      transforma_correlacao
+    ) %>%
+      torch::torch_stack()
+    
+    x <- x$unsqueeze(2) %>% self$lin()
+    
+    x$squeeze()
+  }
+)
+
+modelo1 <- modelo_corr()
+modelo1 <- modelo1$to(device = device)
+
+print(modelo1)
+```
+
+```{r}
+modelo1$parameters
+```
+
+## Loss
+
+```{r}
+criterio <- torch::nn_mse_loss()
+```
+
+## Optimizer
+
+## Loop de treinamento
+
+```{r}
+library(luz)
+
+fitted <- modelo_corr %>%
+  setup(
+    loss = criterio,
+    optimizer = torch::optim_adam
+  ) %>%
+  set_opt_hparams(lr = 0.01) %>%
+  fit(train_dl, epochs = 1, valid_data = train_dl)
+# USAR LUZ NESSA PARTE DO LOOP DE TREINAMENTO
+```
+
+
+```{r}
+losses <- c()
+# we can then loop trough the elements of the dataloader with
+i <- 0
+pb <- progress::progress_bar$new(total = length(train_dl), format = ":current / :total [:bar] :eta :percent - RMSE: :loss")
+plot(1:length(train_dl), numeric(length(train_dl)), type = "l", ylim = c(0, 0.5))
+for(batch in enumerate(train_dl)) {
+  i <- i + 1
+  otimizador$zero_grad()
+  y_pred <- batch[[1]]$to(device = device)
+  y_pred <- y_pred %>% 
+    torchvision::transform_crop(5, 22, 125, 127) %>% 
+    modelo1()
+  y_obs <- batch[[2]]$to(device = device)
+  loss <- criterio(y_pred, y_obs)
+  loss$backward()
+  loss_cpu <- as.numeric(loss$to(device = "cpu"))
+  losses <- c(losses, loss_cpu)
+  otimizador$step()
+  pb$tick(tokens = list(loss = sqrt(loss_cpu)))
+  if(i %% 10 == 0)
+    points(i, loss_cpu)
+}
+
+plot(losses, type = "l", col = "royalblue")
+```
+
+## Predições da base teste
+
+```{r}
+submition_dl <- dataloader(submition, batch_size = 50000)
+
+for(submition_item in enumerate(submition_dl)) {
+  df <- tibble::tibble(
+    id = submition_item[[3]],
+    corr = as.numeric( modelo1(submition_item[[1]]))
+  )
+  # submition_df <- submition_df %>% left_join(df, by = "id")
+}
+
+write_csv(df, "submit_modelo1.csv")
+
+hist(df$corr)
+hist(train$images$corr)
+```
+
+## predicao de um print screen
+
+```{r}
+printscreen <- torchvision::magick_loader("Picture3.png")
+
+printscreen_torch <- printscreen %>%
+  torchvision::transform_to_tensor() %>%
+  torchvision::transform_rgb_to_grayscale() %>%
+  torch::torch_unsqueeze(1) %>%
+  torch::torch_unsqueeze(1)
+
+luz::luz_save(fitted, "modelo_guess_the_correlation2")
+correlacao_predita <- fitted$model(printscreen_torch$to(device = device))
+as.numeric(correlacao_predita$to(device = "cpu"))
+```
+
+
+
+## Modelo2
+
+CNN tradicional ---> invariante no espaço
+
+
+1) MUITOS PARAMETROS 
+2) PERDA DE INFORMACAO ESPACIAL
+
+
+```{r}
+# NN module
+modelo_marlesson <- torch::nn_module(
+  "ModeloMarlesson",
+  initialize = function() {
+    self$conv1 <- torch::nn_conv2d(1, out_channels = 32, kernel_size = c(3,3))
+    self$conv2 <- torch::nn_conv2d(32, out_channels = 64, kernel_size = c(5,5))
+    self$dense1 <- torch::nn_linear(12544, 256)
+    self$dense2 <- torch::nn_linear(256, 128)
+    self$dense3 <- torch::nn_linear(128, 1)
+  },
+  
+  forward = function(batch) {
+    # ceu estrelado
+    x <- batch %>% # (B, 150, 150)
+      torchvision::transform_crop(5, 22, 125, 127) %>% # (B, 125, 127)
+      torch::torch_unsqueeze(2) %>% # (B, 1, 125, 127)
+      self$conv1() %>% # (B, 32, 123, 125)
+      torch::nnf_relu() %>% 
+      torch::nnf_avg_pool2d(kernel_size = c(2,2)) %>% # (B, 32, 61, 62)
+      self$conv2() %>% # (B, 64, 57, 58)
+      torch::nnf_relu() %>%
+      torch::nnf_avg_pool2d(kernel_size = c(4,4)) %>% # (B, 64, 14, 14)
+      torch::torch_flatten(start_dim = 2) %>% # (B, 12544)
+      self$dense1() %>%
+      torch::nnf_relu() %>%
+      self$dense2() %>%
+      torch::nnf_relu() %>%
+      self$dense3()
+    x
+  }
+)
+
+modelo2 <- modelo_marlesson()
+modelo2 <- modelo2$to(device = device)
+print(modelo2)
+```
+```{r}
+# teste
+batch <- torch_stack(list(train[1]$x, train[2]$x))
+modelo2(batch$to(device = device))
+```
+
+```{r}
+criterio <- torch::nn_mse_loss()
+otimizador <- torch::optim_adam(modelo2$parameters, lr = 0.1)
+losses <- c()
+# we can then loop trough the elements of the dataloader with
+i <- 0
+pb <- progress::progress_bar$new(total = length(train_dl), format = ":current / :total [:bar] :eta :percent - RMSE: :loss")
+plot(1:length(train_dl), numeric(length(train_dl)), type = "l", ylim = c(0, 0.5))
+for(batch in enumerate(train_dl)) {
+  i <- i + 1
+  otimizador$zero_grad()
+  y_pred <- modelo2(batch[[1]]$to(device = device))
+  y_obs <- batch[[2]]$to(device = device)
+  loss <- criterio(y_pred$squeeze(), y_obs)
+  loss$backward()
+  loss_r <- as.numeric(loss$to(device = "cpu"))
+  losses <- c(losses, loss_r)
+  otimizador$step()
+  pb$tick(tokens = list(loss = sqrt(loss_r)))
+  if(i %% 10 == 0)
+    points(i, loss_r)
+}
+
+plot(losses, type = "l", col = "royalblue")
+```
+
+
+
+
+### Modelo3
+
+CNN com kernel retangular ----> considera a posicao das coisas
+

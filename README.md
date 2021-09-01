@@ -18,7 +18,7 @@
   - [x] esquisse
   - [x] semantic.dashboard
   - [x] xaringanExtra
-  - [ ] quantmod
+  - [x] quantmod
   - [x] waldo
   - [ ] target
   - [ ] blastula
@@ -27,12 +27,15 @@
   - [ ] sloop
   - [ ] withr
   - [ ] pak
-  - [ ] pillar
+  - [x] pillar
   - [ ] gert
   - [ ] pins
   - [ ] modeltime
   - [ ] finetune
   - [ ] brms
-  - [ ] unglue
+  - [x] unglue
   - [ ] Causalbounds
   - [ ] [metathis](https://github.com/gadenbuie/metathis)
+  - [ ] epoxy
+  - [ ] box
+  - [ ] tidymodules
