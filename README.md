@@ -38,3 +38,4 @@
   - [ ] [metathis](https://github.com/gadenbuie/metathis)
   - [ ] epoxy
   - [ ] box
+  - [ ] tidymodules
