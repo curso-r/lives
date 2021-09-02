@@ -3,6 +3,8 @@ library(bigrquery)
 library(tidymodels)
 library(modeltime)
 
+remotes::install_
+
 conexao_covid <- dbConnect(
   bigrquery::bigquery(),
   project = "basedosdados",
