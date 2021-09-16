@@ -93,7 +93,18 @@ respostas <- lista_respostas("Salmo", path = "peixes")
 html <- respostas %>%
   read_html() %>%
   xml2::xml_find_all(".//p[@class='result']") %>%
-  `[`(-1)
+  `[`(-1) %>%
+  `[`(c(FALSE, TRUE))
+
+tabela <- tibble(
+  resposta = xml2::xml_text(html),
+  current_status = str_extract(resposta, "Current status.+$"),
+  especie = html %>% xml2::xml_find_first("b") %>% xml2::xml_text()
+)
+
+
+
+
 
 BROWSE(respostas)
 
