@@ -189,6 +189,7 @@ da_resultado %>%
 da_resultado %>%
   dplyr::filter(!is.na(erro))
 
+readr::write_rds(da_resultado, "drafts/dados_especies.rds")
 
 # Tidy -------------------------------------------------------------------------
 
