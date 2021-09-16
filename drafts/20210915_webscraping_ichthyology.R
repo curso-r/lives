@@ -98,6 +98,87 @@ html <- respostas %>%
 BROWSE(respostas)
 
 
+url <- "https://researcharchive.calacademy.org/research/ichthyology/catalog/fishcatmain.asp"
+
+dados <- list(
+  "tbl" = "Species",
+  "contains" = "Salmo",
+  "Submit" = "Search"
+)
+
+r <- httr::POST(url, body = dados, encode = "form")
+
+dados <- r %>%
+  xml2::read_html() %>%
+  xml2::xml_find_all("//p[@class='result']")
+
+
+# versão do julio ---------------------------------------------------------
+
+# montar a tabela ---------------------------------------------------------
+
+u <- "https://researcharchive.calacademy.org/research/ichthyology/catalog/SpeciesByFamily.asp"
+r <- httr::GET(u)
+
+tabela <- r %>%
+  xml2::read_html() %>%
+  xml2::xml_find_first("//*[@style='width:700px; border-collapse:collapse']") %>%
+  rvest::html_table() %>%
+  janitor::clean_names() %>%
+  dplyr::filter(
+    !is.na(available_genera),
+    class != "Totals"
+  )
+
+
+quantidade_especies <- function(x) {
+  url <- "https://researcharchive.calacademy.org/research/ichthyology/catalog/fishcatmain.asp"
+  dados <- list(
+    "tbl" = "Species",
+    "contains" = x,
+    "Submit" = "Search"
+  )
+  r <- httr::POST(url, body = dados, encode = "form")
+  resultados <- r %>%
+    xml2::read_html() %>%
+    xml2::xml_find_all("//p[@class='result']") %>%
+    xml2::xml_text() %>%
+    tibble::enframe() %>%
+    dplyr::mutate(value = stringr::str_squish(value)) %>%
+    dplyr::filter(value != "") %>%
+    dplyr::slice(-1) %>%
+    dplyr::mutate(
+      nome = stringr::str_extract(value, "[a-z]+, [A-Za-z]+"),
+      status = stringr::str_extract(value, "(?<=Current status: ).*")
+    )
+  resultados
+}
+
+
+entrada <- tabela %>%
+  dplyr::arrange(dplyr::desc(valid_species)) %>%
+  dplyr::pull(subfamily) %>%
+  unique() %>%
+  purrr::set_names()
+
+# future::plan(future::multisession, workers = 8)
+
+safe <- purrr::possibly(quantidade_especies, tibble::tibble(erro = "erro"))
+progressr::with_progress({
+  p <- progressr::progressor(length(entrada))
+  da_resultado <- purrr::map_dfr(entrada, ~{
+    p()
+    safe(.x)
+  }, .id = "especie")
+})
+
+da_resultado %>%
+  dplyr::count(erro)
+
+da_resultado %>%
+  dplyr::filter(!is.na(erro))
+
+
 # Tidy -------------------------------------------------------------------------
 
 # Visualize --------------------------------------------------------------------
