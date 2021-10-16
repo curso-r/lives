@@ -6,31 +6,6 @@ library(magrittr)
 
 # acesso
 
-u <- "`http://internet-consultapublica.apps.sefaz.ce.gov.br/contencioso/consultar`"
-
-body <- list(
-  "numano" = "",
-  "descricaocamara" = "3"
-)
-
-r <- httr::POST(u, body = body, encode = "form")
-
-# scraping
-
-tag_tabela <- r %>%
-  xml2::read_html() %>%
-  xml2::xml_find_first("//table[@id='resolucoes']")
-
-links <- tag_tabela %>%
-  xml2::xml_find_all(".//a") %>%
-  xml2::xml_attr("href")
-
-da_tabela <- tag_tabela %>%
-  rvest::html_table() %>%
-  tibble::as_tibble() %>%
-  dplyr::mutate(link = links) %>%
-  janitor::clean_names()
-
 baixa_camara <- function(camara) {
   u <- "http://internet-consultapublica.apps.sefaz.ce.gov.br/contencioso/consultar"
 
@@ -60,7 +35,7 @@ baixa_camara <- function(camara) {
 }
 
 dados_resultado <- purrr::map_dfr(
-  camaras,
+  1:5,
   baixa_camara,
   .id = "id_camara"
 )
