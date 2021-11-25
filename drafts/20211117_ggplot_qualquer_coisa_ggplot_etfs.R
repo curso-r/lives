@@ -5,7 +5,7 @@
 library(magrittr)
 library(ggplot2)
 #library(rbmfbovespa)
-library(rb3)
+# library(rb3)
 
 devtools::install_github('wilsonfreitas/transmute')
 devtools::install_github('wilsonfreitas/rb3')
@@ -41,17 +41,39 @@ poluicao_tidy <- poluicao %>%
     semana = lubridate::week(data),
     dia_da_semana = forcats::fct_rev(lubridate::wday(data, label = TRUE)),
     mes = lubridate::month(data, label = TRUE)
-  )
+  ) %>%
+  group_by(dia_da_semana, mes, estacao_cetesb) %>%
+  mutate(id_semana = 1:n()) %>%
+  ungroup()
+
+
+
+poluicao_tidy %>%
+  dplyr::group_by(mes, estacao_cetesb) %>%
+  dplyr::mutate(semana = dplyr::case_when(
+
+  ))
+
+
+poluicao_tidy %>%
+  dplyr::group_by(dia_da_semana, mes, estacao_cetesb) %>%
+  dplyr::mutate(id_semana = 1:n()) %>%
+  ungroup()
+
 
 # Visualize --------------------------------------------------------------------
 
 poluicao_tidy %>%
   #filter(estacao_cetesb %in% c("Pinheiros", "Parque D.Pedro II")) %>%
-  ggplot(aes(x = semana, y = dia_da_semana, fill = concentracao)) +
+  ggplot(aes(x = id_semana, y = dia_da_semana, fill = concentracao)) +
   geom_tile() +
   facet_grid(estacao_cetesb~mes, scales = 'free_x') +
   theme_minimal() +
   scale_fill_gradient(low = "white", high = "black")
+
+
+
+
 
 # Model ------------------------------------------------------------------------
 

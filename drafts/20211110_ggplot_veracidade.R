@@ -30,6 +30,8 @@ da_tidy <- da_br |>
 library(ggplot2)
 # install.packages("mdthemes")
 
+library(showtext)
+font_add_google("IBM Plex Sans", "IBM Plex Sans")
 
 
 
@@ -87,7 +89,9 @@ faz_grafico <- function(filme) {
         " <span style='color:#444444;font-size:10px'>2018</span>"
       )
     ) +
-    mdthemes::md_theme_classic() +
+    mdthemes::md_theme_classic(
+      base_family = "Helvetica"
+    ) +
     theme(
       axis.line = element_blank(),
       axis.ticks = element_blank(),
@@ -96,6 +100,8 @@ faz_grafico <- function(filme) {
     )
 
 }
+
+readr::parse_
 
 
 dois_filmes <- c(
@@ -109,6 +115,8 @@ lista_graficos <- purrr::map(dois_filmes, faz_grafico)
 
 patchwork::wrap_plots(lista_graficos, ncol = 1)
 
+library(patchwork)
+purrr::reduce(lista_graficos, `/`)
 
 # Model ------------------------------------------------------------------------
 
