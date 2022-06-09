@@ -9,17 +9,6 @@ u <- "https://raw.githubusercontent.com/adamribaudo/storytelling-with-data-ggplo
 dados_raw <- read_csv(u) |>
   janitor::clean_names()
 
-
-aux_hjust <- tribble(
-  ~item, ~name, ~hjust,
-  "Survey item A",,
-  "Survey item A",,
-  "Survey item B",,
-  "Survey item B",,
-  "Survey item C",,
-  "Survey item C",,
-)
-
 dados_tidy <- dados_raw |>
   pivot_longer(-item) |>
   mutate(value = parse_number(value) / 100) |>
